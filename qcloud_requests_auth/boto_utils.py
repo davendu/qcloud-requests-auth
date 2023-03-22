@@ -6,7 +6,7 @@ aws-requests-auth package.
 
 from botocore.session import Session
 
-from .aws_auth import AWSRequestsAuth
+from .qcloud_auth import QCloudRequestsAuth
 
 
 def get_credentials(credentials_obj=None):
@@ -29,7 +29,7 @@ def get_credentials(credentials_obj=None):
     }
 
 
-class BotoAWSRequestsAuth(AWSRequestsAuth):
+class BotoAWSRequestsAuth(QCloudRequestsAuth):
 
     def __init__(self, aws_host, aws_region, aws_service):
         """
@@ -50,4 +50,4 @@ class BotoAWSRequestsAuth(AWSRequestsAuth):
         # provide credentials explicitly during each __call__, to take advantage
         # of botocore's underlying logic to refresh expired credentials
         credentials = get_credentials(self._refreshable_credentials)
-        return self.get_aws_request_headers(r, **credentials)
+        return self.get_qcloud_request_headers(r, **credentials)

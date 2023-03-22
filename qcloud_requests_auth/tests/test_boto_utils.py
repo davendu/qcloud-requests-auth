@@ -5,7 +5,7 @@ import unittest
 
 import mock
 
-from aws_requests_auth.boto_utils import BotoAWSRequestsAuth, get_credentials
+from qcloud_requests_auth.boto_utils import BotoAWSRequestsAuth, get_credentials
 
 
 class TestBotoUtils(unittest.TestCase):

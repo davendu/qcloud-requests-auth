@@ -4,7 +4,7 @@ import mock
 import sys
 import unittest
 
-from aws_requests_auth.aws_auth import AWSRequestsAuth
+from qcloud_requests_auth.qcloud_auth import QCloudRequestsAuth
 
 
 class TestAWSRequestsAuth(unittest.TestCase):
@@ -23,8 +23,8 @@ class TestAWSRequestsAuth(unittest.TestCase):
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/'
         mock_request = mock.Mock()
         mock_request.url = url
-        self.assertEqual('/', AWSRequestsAuth.get_canonical_path(mock_request))
-        self.assertEqual('', AWSRequestsAuth.get_canonical_querystring(mock_request))
+        self.assertEqual('/', QCloudRequestsAuth.get_canonical_path(mock_request))
+        self.assertEqual('', QCloudRequestsAuth.get_canonical_querystring(mock_request))
 
     def test_characters_escaped_in_path(self):
         """
@@ -34,8 +34,8 @@ class TestAWSRequestsAuth(unittest.TestCase):
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/+foo.*/_stats'
         mock_request = mock.Mock()
         mock_request.url = url
-        self.assertEqual('/%2Bfoo.%2A/_stats', AWSRequestsAuth.get_canonical_path(mock_request))
-        self.assertEqual('', AWSRequestsAuth.get_canonical_querystring(mock_request))
+        self.assertEqual('/%2Bfoo.%2A/_stats', QCloudRequestsAuth.get_canonical_path(mock_request))
+        self.assertEqual('', QCloudRequestsAuth.get_canonical_querystring(mock_request))
 
     def test_path_with_querystring(self):
         """
@@ -45,8 +45,8 @@ class TestAWSRequestsAuth(unittest.TestCase):
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/my_index/?pretty=True'
         mock_request = mock.Mock()
         mock_request.url = url
-        self.assertEqual('/my_index/', AWSRequestsAuth.get_canonical_path(mock_request))
-        self.assertEqual('pretty=True', AWSRequestsAuth.get_canonical_querystring(mock_request))
+        self.assertEqual('/my_index/', QCloudRequestsAuth.get_canonical_path(mock_request))
+        self.assertEqual('pretty=True', QCloudRequestsAuth.get_canonical_querystring(mock_request))
 
     def test_multiple_get_params(self):
         """
@@ -56,7 +56,7 @@ class TestAWSRequestsAuth(unittest.TestCase):
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/index/type/_search?scroll=5m&search_type=scan'
         mock_request = mock.Mock()
         mock_request.url = url
-        self.assertEqual('scroll=5m&search_type=scan', AWSRequestsAuth.get_canonical_querystring(mock_request))
+        self.assertEqual('scroll=5m&search_type=scan', QCloudRequestsAuth.get_canonical_querystring(mock_request))
 
     def test_post_request_with_get_param(self):
         """
@@ -67,14 +67,14 @@ class TestAWSRequestsAuth(unittest.TestCase):
         mock_request = mock.Mock()
         mock_request.url = url
         mock_request.method = "POST"
-        self.assertEqual('version=1', AWSRequestsAuth.get_canonical_querystring(mock_request))
+        self.assertEqual('version=1', QCloudRequestsAuth.get_canonical_querystring(mock_request))
 
     def test_auth_for_get(self):
-        auth = AWSRequestsAuth(aws_access_key='YOURKEY',
-                               aws_secret_access_key='YOURSECRET',
-                               aws_host='search-foo.us-east-1.es.amazonaws.com',
-                               aws_region='us-east-1',
-                               aws_service='es')
+        auth = QCloudRequestsAuth(qcloud_secret_id='YOURKEY',
+                               qcloud_secret_key='YOURSECRET',
+                               qcloud_host='search-foo.us-east-1.es.amazonaws.com',
+                               qcloud_region='us-east-1',
+                               qcloud_service='es')
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/'
         mock_request = mock.Mock()
         mock_request.url = url
@@ -96,11 +96,11 @@ class TestAWSRequestsAuth(unittest.TestCase):
         }, mock_request.headers)
 
     def test_auth_for_post(self):
-        auth = AWSRequestsAuth(aws_access_key='YOURKEY',
-                               aws_secret_access_key='YOURSECRET',
-                               aws_host='search-foo.us-east-1.es.amazonaws.com',
-                               aws_region='us-east-1',
-                               aws_service='es')
+        auth = QCloudRequestsAuth(qcloud_secret_id='YOURKEY',
+                               qcloud_secret_key='YOURSECRET',
+                               qcloud_host='search-foo.us-east-1.es.amazonaws.com',
+                               qcloud_region='us-east-1',
+                               qcloud_service='es')
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/'
         mock_request = mock.Mock()
         mock_request.url = url
@@ -125,11 +125,11 @@ class TestAWSRequestsAuth(unittest.TestCase):
         }, mock_request.headers)
 
     def test_auth_for_post_with_str_body(self):
-        auth = AWSRequestsAuth(aws_access_key='YOURKEY',
-                               aws_secret_access_key='YOURSECRET',
-                               aws_host='search-foo.us-east-1.es.amazonaws.com',
-                               aws_region='us-east-1',
-                               aws_service='es')
+        auth = QCloudRequestsAuth(qcloud_secret_id='YOURKEY',
+                               qcloud_secret_key='YOURSECRET',
+                               qcloud_host='search-foo.us-east-1.es.amazonaws.com',
+                               qcloud_region='us-east-1',
+                               qcloud_service='es')
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/'
         mock_request = mock.Mock()
         mock_request.url = url
@@ -158,11 +158,11 @@ class TestAWSRequestsAuth(unittest.TestCase):
         'python3 produces a different hash that we\'re comparing.',
     )
     def test_auth_for_post_with_unicode_body_python2(self):
-        auth = AWSRequestsAuth(aws_access_key='YOURKEY',
-                               aws_secret_access_key='YOURSECRET',
-                               aws_host='search-foo.us-east-1.es.amazonaws.com',
-                               aws_region='us-east-1',
-                               aws_service='es')
+        auth = QCloudRequestsAuth(qcloud_secret_id='YOURKEY',
+                               qcloud_secret_key='YOURSECRET',
+                               qcloud_host='search-foo.us-east-1.es.amazonaws.com',
+                               qcloud_region='us-east-1',
+                               qcloud_service='es')
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/'
         mock_request = mock.Mock()
         mock_request.url = url
@@ -192,11 +192,11 @@ class TestAWSRequestsAuth(unittest.TestCase):
         'python3 produces a different hash that we\'re comparing.'
     )
     def test_auth_for_post_with_unicode_body_python3(self):
-        auth = AWSRequestsAuth(aws_access_key='YOURKEY',
-                               aws_secret_access_key='YOURSECRET',
-                               aws_host='search-foo.us-east-1.es.amazonaws.com',
-                               aws_region='us-east-1',
-                               aws_service='es')
+        auth = QCloudRequestsAuth(qcloud_secret_id='YOURKEY',
+                               qcloud_secret_key='YOURSECRET',
+                               qcloud_host='search-foo.us-east-1.es.amazonaws.com',
+                               qcloud_region='us-east-1',
+                               qcloud_service='es')
         url = 'http://search-foo.us-east-1.es.amazonaws.com:80/'
         mock_request = mock.Mock()
         mock_request.url = url
