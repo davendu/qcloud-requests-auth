@@ -43,13 +43,13 @@ class QCloudRequestsAuth(requests.auth.AuthBase):
                  qcloud_action,
                  qcloud_apiversion):
         """
-        Example usage for talking to an AWS Elasticsearch Service:
+        Example usage for talking to an QCloud CVM API:
 
-        AWSRequestsAuth(aws_access_key='YOURKEY',
-                        aws_secret_access_key='YOURSECRET',
-                        aws_host='search-service-foobar.us-east-1.es.amazonaws.com',
-                        aws_region='us-east-1',
-                        aws_service='es')
+        QCloudRequestsAuth(qcloud_access_key='YOURKEY',
+                           qcloud_secret_access_key='YOURSECRET',
+                           qcloud_host='cvm.tencentcloudapi.com',
+                           qcloud_region='ap-shanghai',
+                           qcloud_service='cvm')
 
         """
         self.qcloud_secret_id = qcloud_secret_id
@@ -64,8 +64,8 @@ class QCloudRequestsAuth(requests.auth.AuthBase):
         """
         Adds the authorization headers required by QCloud Signature v3.
         """
-        aws_headers = self.get_qcloud_request_headers_handler(r)
-        r.headers.update(aws_headers)
+        qcloud_headers = self.get_qcloud_request_headers_handler(r)
+        r.headers.update(qcloud_headers)
         return r
 
     def get_qcloud_request_headers_handler(self, r):
@@ -93,18 +93,22 @@ class QCloudRequestsAuth(requests.auth.AuthBase):
         """
         # Create a date for headers and the credential string
         t = datetime.datetime.now()
-        tUTC = datetime.datetime.utcnow()
         amzdate = str(int(t.timestamp()))
-        datestamp = tUTC.strftime('%Y-%m-%d')  # Date w/o time for credential_scope
+        datestamp = t.utcfromtimestamp(t.timestamp()).strftime('%Y-%m-%d')  # Date w/o time for credential_scope
 
         canonical_uri = QCloudRequestsAuth.get_canonical_path(r)
 
         canonical_querystring = QCloudRequestsAuth.get_canonical_querystring(r)
 
+        if r.headers.get('content-type') is None:
+            if not r.method == 'GET':
+                raise ValueError('content-type must be set for non GET methods')
+            r.headers['content-type'] = 'application/x-www-form-urlencoded'
+
         # Create the canonical headers and signed headers. Header names
         # and value must be trimmed and lowercase, and sorted in ASCII order.
         # Note that there is a trailing \n.
-        canonical_headers = ('content-type:' + r.headers['content-type'] + '\n' +
+        canonical_headers = ('content-type:' + r.headers.get('content-type', '') + '\n' +
                              'host:' + self.qcloud_host + '\n')
 
         # Create the list of signed headers. This lists the headers
@@ -172,19 +176,22 @@ class QCloudRequestsAuth(requests.auth.AuthBase):
 
     @classmethod
     def get_canonical_path(cls, r):
+        """
+        Create canonical path. According to QCloud, this should always be "/"
+        """
         return "/"
 
     @classmethod
     def get_canonical_querystring(cls, r):
         """
-        Create the canonical query string. According to AWS, by the
+        Create the canonical query string. According to QCloud, by the
         end of this function our query string values must
         be URL-encoded (space=%20) and the parameters must be sorted
         by name.
 
         This method assumes that the query params in `r` are *already*
         url encoded.  If they are not url encoded by the time they make
-        it to this function, AWS may complain that the signature for your
+        it to this function, QCloud may complain that the signature for your
         request is incorrect.
 
         It appears elasticsearc-py url encodes query paramaters on its own:

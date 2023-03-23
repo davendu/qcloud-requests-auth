@@ -2,6 +2,6 @@ include README.md
 include LICENSE
 include CHANGELOG.md
 include MANIFEST.in
-recursive-include aws_requests_auth *
+recursive-include qcloud_requests_auth *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]

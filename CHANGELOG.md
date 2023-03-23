@@ -1,4 +1,4 @@
-Changelog (aws-requests-auth)
+Changelog (qcloud-requests-auth)
 ==================
 
 0.0.1
